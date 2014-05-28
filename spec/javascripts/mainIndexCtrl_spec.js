@@ -64,7 +64,7 @@
       deferred.company_info = "stuff goes here";
 
       $httpBackend.expect('GET', '/search?company=Burt')
-          .respond(deferred);
+      .respond(deferred);
 
         // have to use $apply to trigger the $digest which will
         // take care of the HTTP request
@@ -80,8 +80,39 @@
         $httpBackend.flush();
 
 
-            expect($scope.company_info).toEqual("stuff goes here");
-         
+         expect($scope.company_info).toEqual("stuff goes here");
+    
+
+
+    it('should have a method to check if the path is active', function() {
+        var controller = createController();
+        $location.path('/children');
+        expect($location.path()).toBe('/children');
+        // expect($scope.isActive('/about')).toBe(true);
+        // expect($scope.isActive('/contact')).toBe(false);
+    });
+
+    it('should call #viewChildren', function(){
+      var controller = createController();
+      $scope.urlToScrape = '/children';
+
+      deferred = $q.defer();
+      deferred.company_info.parents[index].children_info = "gays everywhere!";
+
+
+      $httpBackend.expect("GET", "/children")
+      .respond(deferred);
+
+      $scope.$apply(function() {
+        $scope.viewChildren('jQueery', 1);
+        deferred.resolve({children_info:"gays everywhere!"});
+      });
+      
+      $httpBackend.flush();
+
+      expect($scope.company_info.parents[1].children_info ).toEqual("gays everywhere!");
+
+    })
 
         // expect($scope.retrievedUrls).toEqual("stuff goes here");
         // expect($scope.parseOriginalUrlStatus).toEqual('waiting');
